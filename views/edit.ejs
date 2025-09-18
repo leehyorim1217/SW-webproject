@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>글 수정</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.6/quill.snow.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container mt-4 mb-5">
+        <div class="row justify-content-center">
+            <div class="col-md-10">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-dark text-white">
+                        <h4 class="card-title mb-0">글 수정</h4>
+                    </div>
+                    <div class="card-body p-4">
+                        <form method="post" action="/edit/<%= post.id %>?_method=PUT" enctype="multipart/form-data" id="editForm">
+                            
+                            <!-- 제목 -->
+                            <div class="mb-4">
+                                <div class="row mb-2">
+                                    <div class="col-sm-3"><strong>제목:</strong></div>
+                                    <div class="col-sm-9">
+                                        <input type="text" class="form-control" name="title" value="<%= post.title %>" placeholder="제목을 입력하세요" required>
+                                    </div>
+                                </div>
+                                <hr>
+                            </div>
+                            
+                            <!-- 내용 -->
+                            <div class="mb-4">
+                                <div class="row mb-2">
+                                    <div class="col-sm-3"><strong>내용:</strong></div>
+                                    <div class="col-sm-9">
+                                        <div class="border" style="min-height: 350px;">
+                                            <div id="editor" style="height: 300px;"></div>
+                                        </div>
+                                        <textarea name="content" id="content" style="display: none;"><%- post.content %></textarea>
+                                    </div>
+                                </div>
+                                <hr>
+                            </div>
+
+                            <!-- 기존 이미지 표시 -->
+                            <% if (post.image) { %>
+                            <div class="mb-4">
+                                <div class="row mb-2">
+                                    <div class="col-sm-3"><strong>기존 이미지:</strong></div>
+                                    <div class="col-sm-9">
+                                        <img src="/uploads/<%= post.image %>" alt="첨부 이미지" class="img-thumbnail" style="max-width:200px;">
+                                    </div>
+                                </div>
+                                <hr>
+                            </div>
+                            <% } %>
+
+                            <!-- 이미지 업로드 -->
+                            <div class="mb-4">
+                                <div class="row mb-2">
+                                    <div class="col-sm-3"><strong>이미지 수정:</strong></div>
+                                    <div class="col-sm-9">
+                                        <input type="file" class="form-control" name="image" accept="image/*">
+                                        <small class="text-muted">JPG, PNG, GIF 파일만 업로드 가능합니다</small>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 버튼 그룹 -->
+                            <div class="d-flex justify-content-between pt-3 border-top">
+                                <a href="/post/<%= post.id %>" class="btn btn-secondary">취소</a>
+                                <button type="submit" class="btn btn-primary">수정 완료</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/quill/1.3.6/quill.min.js"></script>
+
+    <script>
+    const quill = new Quill('#editor', {
+        theme: 'snow',
+        modules: {
+            toolbar: [
+                ['bold', 'italic', 'underline', 'strike'],
+                [{ 'header': [1, 2, 3, false] }],
+                [{ 'color': [] }, { 'background': [] }],
+                [{ 'align': [] }],
+                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                [{ 'indent': '-1'}, { 'indent': '+1' }],
+                ['link'],
+                ['clean']
+            ]
+        },
+        placeholder: '내용을 입력하세요...'
+    });
+
+    document.getElementById('editForm').addEventListener('submit', function(e) {
+        const textContent = quill.getText().trim();
+        if (textContent.length === 0) {
+            e.preventDefault();
+            alert('내용을 입력해주세요.');
+            return false;
+        }
+        document.getElementById('content').value = quill.root.innerHTML;
+        return true;
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const contentTextarea = document.getElementById('content');
+        if (contentTextarea.value) {
+            quill.root.innerHTML = contentTextarea.value;
+        }
+    });
+    </script>
+
+    <style>
+    /* 모든 둥근 모서리 제거 */
+    *, *::before, *::after {
+        border-radius: 0 !important;
+    }
+
+    .ql-editor {
+        min-height: 250px;
+        font-size: 14px;
+        line-height: 1.6;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        border-radius: 0 !important;
+    }
+
+    .ql-toolbar {
+        border-top: 1px solid #dee2e6;
+        border-left: 1px solid #dee2e6;
+        border-right: 1px solid #dee2e6;
+        background-color: #f8f9fa;
+        border-radius: 0 !important;
+    }
+
+    .ql-container {
+        border-bottom: 1px solid #dee2e6;
+        border-left: 1px solid #dee2e6;
+        border-right: 1px solid #dee2e6;
+        border-radius: 0 !important;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #86b7fe;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+        border-radius: 0 !important;
+    }
+
+    .card, .card-header, .card-body, .form-control, .form-select, .btn, 
+    .border, .bg-light, .list-group-item, .alert, .input-group, 
+    .input-group-text, .badge, .dropdown-menu, .dropdown-item {
+        border-radius: 0 !important;
+    }
+    </style>
+</body>
+</html>

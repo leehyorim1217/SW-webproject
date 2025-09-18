@@ -1,0 +1,114 @@
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card border-0 shadow-sm">
+        <div class="card-header bg-dark text-white">
+          <h4 class="card-title mb-0"> 사용자 정보</h4>
+        </div>
+        <div class="card-body p-4">
+          
+          <!-- 사용자 기본 정보 -->
+          <div class="mb-4">
+            <div class="row mb-2">
+              <div class="col-sm-3"><strong>아이디:</strong></div>
+              <div class="col-sm-9"><%= user.username %></div>
+            </div>
+            <hr>
+            <div class="row mb-2">
+              <div class="col-sm-3"><strong>가입일:</strong></div>
+              <div class="col-sm-9">
+                <%= user.createdAt || '정보 없음' %>
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-sm-3"><strong>최근 로그인:</strong></div>
+              <div class="col-sm-9">
+                <%= user.lastLoginAt || '정보 없음' %>
+              </div>
+            </div>
+          </div>
+
+          <!-- 활동 통계 -->
+          <div class="mb-4">
+            <h5 class="text-muted mb-3">활동 통계</h5>
+            <div class="row text-center">
+              <div class="col-md-4">
+                <div class="bg-light rounded p-3">
+                  <h4 class="text-primary mb-1"><%= postCount %></h4>
+                  <small class="text-muted">작성한 게시글</small>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="bg-light rounded p-3">
+                  <h4 class="text-success mb-1"><%= commentCount %></h4>
+                  <small class="text-muted">작성한 댓글</small>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="bg-light rounded p-3">
+                  <h4 class="text-info mb-1"><%= loginCount || 0 %></h4>
+                  <small class="text-muted">총 로그인 횟수</small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 최근 작성한 게시글 -->
+          <div class="mb-4">
+            <h5 class="text-muted mb-3">최근 작성한 게시글</h5>
+            <% if (recentPosts.length > 0) { %>
+              <div class="list-group">
+                <% recentPosts.forEach(post => { %>
+                <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                  <div>
+                    <a href="/post/<%= post.id %>" class="text-decoration-none text-dark">
+                      <strong><%= post.title %></strong>
+                    </a>
+                    <br>
+                    <small class="text-muted"><%= post.createdAt %></small>
+                  </div>
+                </div>
+                <% }) %>
+              </div>
+            <% } else { %>
+              <div class="text-center py-4 text-muted">
+                <p>작성한 게시글이 없습니다.</p>
+              </div>
+            <% } %>
+          </div>
+
+          <!-- 최근 작성한 댓글 -->
+          <div class="mb-4">
+            <h5 class="text-muted mb-3">최근 작성한 댓글</h5>
+            <% if (recentComments.length > 0) { %>
+              <div class="list-group">
+                <% recentComments.forEach(comment => { %>
+                <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                  <div>
+                    <a href="/post/<%= comment.postId %>" class="text-decoration-none text-dark">
+                      <%= comment.content.length > 50 ? comment.content.substring(0, 50) + '...' : comment.content %>
+                    </a>
+                    <br>
+                    <small class="text-muted"><%= comment.createdAt %></small>
+                  </div>
+                </div>
+                <% }) %>
+              </div>
+            <% } else { %>
+              <div class="text-center py-4 text-muted">
+                <p>작성한 댓글이 없습니다.</p>
+              </div>
+            <% } %>
+          </div>
+
+          <!-- 돌아가기 버튼 -->
+          <div class="d-flex justify-content-between">
+            <a href="/" class="btn btn-secondary">게시판으로 돌아가기</a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
